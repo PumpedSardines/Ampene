@@ -29,9 +29,8 @@
   "scripts": {
     "start": "craco start --config craco/craco.config.js",
     "build:react:electron": "BUILD_PATH='./build/react' PUBLIC_URL=. craco build --config craco/craco.config.js",
-    "build:electron": "electron-builder --dir",
-    "build": "npm run build:react:electron && npm run build:electron",
-    "distribute": "npm run build:react && electron-builder",
+    "build:electron": "npm run build:react:electron && electron-builder --dir",
+    "distribute": "npm run build:react:electron && electron-builder",
     "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\"",
     "dev:electron": "wait-on tcp:3000 && electron ."
   },

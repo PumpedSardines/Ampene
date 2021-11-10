@@ -1,0 +1,33 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="1026" height="1026" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Yes this svg is coded :) -->
+
+    <mask id="inner">
+        <rect x="0" y="0" rx="128" ry="128" width="1024" height="1024" fill="black" />
+        <rect x="64" y="64" rx="64" ry="64" width="896" height="896" fill="white" />
+    </mask>
+
+    <mask id="border">
+        <rect x="0" y="0" rx="128" ry="128" width="1024" height="1024" fill="white" />
+        <rect x="64" y="64" rx="64" ry="64" width="896" height="896" fill="black" />
+    </mask>
+    <g  transform="translate(1,1)">
+        <rect x="0" y="0" rx="128" ry="128" width="1024" height="1024" fill="#f8f8f8" />
+        <rect x="0" y="0" width="1024" height="1024" fill="#333" mask="url(#border)" />
+        <g mask="url(#inner)">
+            <!--transform="rotate(10)"-->
+            <g transform="rotate(10)">
+                <path d="M -128 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 0 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 128 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 256 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 384 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 512 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 640 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 768 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 896 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 1024 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" />
+            </g>
+
+            <g transform="rotate(100) translate(0,-1024)">
+                <path d="M -128 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 0 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 128 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 256 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 384 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 512 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 640 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 768 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 896 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" /><path d="M 1024 -200 v 1424" fill="transparent" stroke="#ccc" stroke-width="32" />
+            </g>
+
+        </g>
+    
+        <path d="M 512 128 L 512 896" fill="transparent" stroke="#333" stroke-width="100" />
+        <path d="M 128 512 L 896 512" fill="transparent" stroke="#333" stroke-width="100" />
+    </g>
+</svg>
