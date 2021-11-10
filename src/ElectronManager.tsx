@@ -101,6 +101,8 @@ function ElectronManager() {
     const reset = useRecoilCallback(({ set }) => () => {
         set(_undoStackCursor, 0);
         set(_undoStack, []);
+        set(_saveLocation, null);
+        set(_camera, { x: 0, y: 0 });
         set(_lines, []);
     });
 
@@ -150,6 +152,8 @@ function ElectronManager() {
 
         if (filepath) {
             save(filepath, await getCurrentSave());
+        } else {
+            saveFromDialog();
         }
     });
 
@@ -174,36 +178,39 @@ function ElectronManager() {
         }
     });
 
+    const loadFromPath = useRecoilCallback(({set}) => async (location: string) => {
+        const data = await load(location);
+
+        if (!("v" in data)) {
+            throw new Error("This file seems to be corrupted");
+        }
+
+        if (FILE_VERSION !== data.v) {
+            throw new Error("This file is not supported by this version of the program");
+        }
+
+        const { camera, lines } = data;
+
+        set(_saveLocation, location);
+        set(_camera, camera);
+        set(_lines, lines);
+
+        set(_undoStack, []);
+        set(_undoStackCursor, 0);
+
+        await pushUndoStack();
+    });
+
     const loadFromDialog = useRecoilCallback(({ set }) => async () => {
         try {
             const result = await dialog.showOpenDialog(getCurrentWindow(), {
                 properties: ['openFile'],
             });
 
-
-
             if (!result.canceled && result.filePaths.length) {
                 const location = result.filePaths[0];
-                const data = await load(location);
 
-                if (!("v" in data)) {
-                    throw new Error("This file seems to be corrupted");
-                }
-
-                if (FILE_VERSION !== data.v) {
-                    throw new Error("This file is not supported by this version of the program");
-                }
-
-                const { camera, lines } = data;
-
-                set(_saveLocation, location);
-                set(_camera, camera);
-                set(_lines, lines);
-
-                set(_undoStack, []);
-                set(_undoStackCursor, 0);
-
-                await pushUndoStack();
+                await loadFromPath(location);
             }
         } catch (err) {
             await dialog.showMessageBox(getCurrentWindow(), {
@@ -226,11 +233,31 @@ function ElectronManager() {
 
     }, []);
 
+
     React.useEffect(() => {
+
+        const getFile = ((): string | null => {
+            try {
+                const tmpPath = "/tmp/inficanvas-openwith";
+                const fs = require("fs");
+                const fileExists = fs.existsSync(tmpPath);
+                if (fileExists) {
+                    const data = JSON.parse(fs.readFileSync(tmpPath)).path;
+                    //fs.unlinkSync(tmpPath);
+                    return data;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+            return null;
+        })();
+
+        if(getFile) {
+            loadFromPath(getFile);
+        }
 
         ipcRenderer.on('new-data', async () => {
             reset();
-            await saveFromDialog()
         });
 
         ipcRenderer.on('store-data', () => {

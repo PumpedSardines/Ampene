@@ -17,19 +17,7 @@ function App() {
 
   if (!electronManager) return <><ElectronManager /></>;
 
-
-  document.title = saveLocation ? path.basename(saveLocation).split(".")[0] : "InfiCanvas"
-
-  if (!saveLocation) {
-    return <div id="load-file">
-      <h1>InfiCanvas</h1>
-      <button onClick={async () => {
-        await electronManager.saveFromDialog();
-        await electronManager.pushUndoStack();
-      }}>New</button>
-      <button onClick={electronManager.loadFromDialog}>Load</button>
-    </div>
-  }
+  document.title = saveLocation ? path.basename(saveLocation).split(".")[0] : "InfiCanvas";
 
   return (
     <div id="app">

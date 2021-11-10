@@ -94,7 +94,7 @@ function Logic() {
                 }
             } else if (mode === "erase") {
 
-                const boxSize = 3;
+                const boxSize = 7;
                 const mouseRect = {
                     top: mouse.y - boxSize,
                     bottom: mouse.y + boxSize,
@@ -106,7 +106,7 @@ function Logic() {
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i];
                     const bb = rect(line.boundingBox, camera);
-                    if (bb.rect.overlap(mouseRect, camera)) {
+                    if (bb.rect.overlap(mouseRect)) {
                         console.log("WHOO");
                         for (const position of line.positions) {
                             if (rect(mouseRect).position.isInside(position, camera)) {
@@ -119,11 +119,11 @@ function Logic() {
 
                 const newLines = JSON.parse(JSON.stringify(lines));
 
-                for(const index of indexes) {
-                    newLines.splice(index,1);
+                for (const index of indexes) {
+                    newLines.splice(index, 1);
                 }
 
-                if(indexes.length) {
+                if (indexes.length) {
                     setLines(newLines);
                     electronManager.pushUndoStack(newLines);
                 }
