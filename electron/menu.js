@@ -134,13 +134,7 @@ module.exports = (win) => {
         {
             role: 'help',
             submenu: [
-                {
-                    label: 'Credits',
-                    click: async () => {
-                        const { shell } = require('electron')
-                        await shell.openExternal('https://electronjs.org')
-                    }
-                }
+
             ]
         }
     ]

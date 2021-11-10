@@ -27,7 +27,7 @@ interface SaveLoadFunctions {
     load: (location: string) => Promise<SaveObject>,
     duplicateCurrent: () => Promise<void>,
     saveCurrent: () => Promise<void>,
-    loadCurrent: () => Promise<void>,
+    loadCurrent: (loc?: string) => Promise<void>,
     resetCurrent: () => void
 }
 
@@ -151,12 +151,21 @@ const SaveLoad = () => {
 
     const loadCurrent: SaveLoadFunctions["loadCurrent"] = useRecoilCallback(({ snapshot, set }) => async (loc?: string) => {
         if (remote) {
+            if(loc) {
+                const { data } = await load(loc);
+
+                set(_saveLocation, loc);
+                set(_camera, data.camera);
+                set(_lines, data.lines);
+                return;
+            }
+
             const result = await remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
                 properties: ['openFile'],
             });
 
             if (!result.canceled && result.filePaths.length) {
-                const location = loc ?? result.filePaths[0];
+                const location = result.filePaths[0];
                 const { data } = await load(location);
 
                 set(_saveLocation, location);

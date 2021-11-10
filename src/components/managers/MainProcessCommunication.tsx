@@ -56,7 +56,7 @@ const MainProcessCommunication = () => {
         })();
 
         if(getFile) {
-            saveLoad.load(getFile);
+            saveLoad.loadCurrent(getFile)
         }
 
     }, [saveLoad]);
