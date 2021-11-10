@@ -9,7 +9,7 @@ export interface Position {
   y: number;
 }
 
-export interface Rect {
+export interface Rectangle {
   top: number;
   left: number;
   right: number;
@@ -17,6 +17,6 @@ export interface Rect {
 }
 
 export type Line = {
-  boundingBox: Rect;
+  boundingBox: Rectangle;
   positions: Position[];
 };

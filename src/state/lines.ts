@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { Line } from "../types";
+import { Line } from "../types/types";
 
 export const _lines = atom<Line[]>({
     key: "lineChunks",

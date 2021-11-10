@@ -1,13 +1,10 @@
 import * as React from "react";
 import { useRecoilValue } from "recoil";
-import { _electronManager } from "./ElectronManager";
-import useResize from "./hooks/useResize";
-import { _camera } from "./state/camera";
-import { _lines, _currentLine } from "./state/lines";
-import { _mode } from "./state/mode";
-import { _mouse, _oldMouse } from "./state/mouse";
-import { Line } from "./types";
-import { rect } from "./utils";
+import { rectangle } from "../../functions/rectangle/rectangle";
+import useResize from "../../hooks/useResize";
+import { _camera } from "../../state/camera";
+import { _lines, _currentLine } from "../../state/lines";
+import { Line } from "../../types/types";
 
 
 function Canvas() {
@@ -17,7 +14,6 @@ function Canvas() {
     const camera = useRecoilValue(_camera);
     const currentLine = useRecoilValue(_currentLine);
     const allLines = useRecoilValue(_lines);
-    const mode = useRecoilValue(_mode);
 
     // Draw function to draw the canvas
     const draw = (ctx: CanvasRenderingContext2D) => {
@@ -51,12 +47,12 @@ function Canvas() {
         }
 
         const drawLine = (line: Line) => {
-            const inside = rect({
+            const inside = rectangle({
                 top: 0,
                 left: 0,
                 right: canvas.width,
                 bottom: canvas.height
-            }).rect.isInside(line.boundingBox, camera);
+            }).rectangle.isInside(line.boundingBox, camera);
 
             if(!inside) {
                 return;

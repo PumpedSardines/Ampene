@@ -1,12 +1,12 @@
 import * as React from "react";
 import { atom, useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
-import { _electronManager } from "./ElectronManager";
-import { _camera } from "./state/camera";
-import { _currentLine, _lines } from "./state/lines";
-import { _mode } from "./state/mode";
-import { _mouse, _oldMouse } from "./state/mouse";
-import { Line, Mouse } from "./types";
-import { rect } from "./utils";
+import { rectangle } from "../../functions/rectangle/rectangle";
+import { _camera } from "../../state/camera";
+import { _currentLine, _lines } from "../../state/lines";
+import { _mode } from "../../state/mode";
+import { _mouse, _oldMouse } from "../../state/mouse";
+import { Line } from "../../types/types";
+import { _undoRedo } from "../managers/UndoRedo";
 
 
 
@@ -17,8 +17,8 @@ function Logic() {
     const [camera, setCamera] = useRecoilState(_camera);
     const mode = useRecoilValue(_mode);
     const [currentLine, setCurrentLine] = useRecoilState(_currentLine);
-    const electronManager = useRecoilValue(_electronManager);
     const [lines, setLines] = useRecoilState(_lines);
+    const undoRedo = useRecoilValue(_undoRedo);
 
 
     const addLine = useRecoilCallback(({ snapshot, set }) => async (line: Line) => {
@@ -31,7 +31,7 @@ function Logic() {
 
     React.useEffect(() => {
 
-        if (!electronManager) {
+        if(!undoRedo) {
             return;
         }
 
@@ -105,11 +105,10 @@ function Logic() {
                 const indexes: number[] = []
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i];
-                    const bb = rect(line.boundingBox, camera);
-                    if (bb.rect.overlap(mouseRect)) {
-                        console.log("WHOO");
+                    const bb = rectangle(line.boundingBox, camera);
+                    if (bb.rectangle.overlap(mouseRect)) {
                         for (const position of line.positions) {
-                            if (rect(mouseRect).position.isInside(position, camera)) {
+                            if (rectangle(mouseRect).position.isInside(position, camera)) {
                                 indexes.push(i);
                                 break;
                             }
@@ -125,7 +124,9 @@ function Logic() {
 
                 if (indexes.length) {
                     setLines(newLines);
-                    electronManager.pushUndoStack(newLines);
+                    undoRedo.pushUndoStack({
+                        lines: newLines
+                    });
                 }
 
             }
@@ -135,14 +136,14 @@ function Logic() {
                 addLine(currentLine)
                     .then(v => {
                         setCurrentLine(null);
-                        electronManager.pushUndoStack();
+                        undoRedo.pushUndoStack();
                     });
             }
         }
 
         setOldMouse(mouse);
 
-    }, [mouse]);
+    }, [mouse, undoRedo]);
 
 
     return <></>;

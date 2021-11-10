@@ -1,6 +1,6 @@
 {
   "name": "infi-canvas",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "productName": "InfiCanvas",
   "dependencies": {
@@ -9,12 +9,15 @@
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "@types/is-object": "^1.0.2",
     "@types/jest": "^26.0.24",
     "@types/node": "^12.20.36",
     "@types/react": "^17.0.34",
     "@types/react-dom": "^17.0.11",
     "@types/recoil": "^0.0.9",
     "electron-is-dev": "^2.0.0",
+    "is-object": "^1.0.2",
+    "node-sass": "^6.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
@@ -22,15 +25,15 @@
     "typescript": "^4.4.4",
     "web-vitals": "^1.1.2"
   },
-  "main": "build/electron.js",
+  "main": "electron/main.js",
   "scripts": {
-    "start": "craco start",
-    "build:react": "craco build",
+    "start": "craco start --config craco/craco.config.js",
+    "build:react:electron": "BUILD_PATH='./build/react' PUBLIC_URL=. craco build --config craco/craco.config.js",
     "build:electron": "electron-builder --dir",
+    "build": "npm run build:react:electron && npm run build:electron",
     "distribute": "npm run build:react && electron-builder",
-    "build": "npm run build:react && npm run build:electron",
     "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\"",
-    "electron": "wait-on tcp:3000 && electron ."
+    "dev:electron": "wait-on tcp:3000 && electron ."
   },
   "eslintConfig": {
     "extends": [
@@ -39,10 +42,15 @@
     ]
   },
   "build": {
+    "extends": null,
     "productName": "InfiCanvas",
     "appId": "com.fritiof-rusck.inficanvas",
+    "files": [
+      "build/react/**/*",
+      "electron/**/*"
+    ],
     "directories": {
-      "output": "electron"
+      "output": "build/electron"
     },
     "dmg": {
       "contents": [
@@ -60,14 +68,14 @@
       ]
     },
     "mac": {
-      "icon": "build/osx/icon.icns",
+      "icon": "electron/assets/osx/icon.icns",
       "category": "public.app-category.utilities",
       "fileAssociations": [
         {
           "ext": [
             "math"
           ],
-          "icon": "build/osx/icon.icns",
+          "icon": "electron/assets/osx/icon.icns",
           "description": "A math file",
           "role": "Viewer"
         }
@@ -88,8 +96,8 @@
   },
   "devDependencies": {
     "concurrently": "^6.3.0",
-    "electron-builder": "^22.13.1",
     "electron": "^15.3.1",
+    "electron-builder": "^22.13.1",
     "electron-packager": "^15.4.0",
     "wait-on": "^6.0.0"
   }

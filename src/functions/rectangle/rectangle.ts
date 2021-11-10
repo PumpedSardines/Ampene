@@ -1,9 +1,12 @@
-import { Position, Rect } from "./types";
+import { Rectangle, Position } from "../../types/types";
 
-export const rect = (object: Rect, offset: Position = { x: 0, y: 0 }) => {
+export const rectangle = (
+  object: Rectangle,
+  offset: Position = { x: 0, y: 0 }
+) => {
   return {
-    rect: {
-      isInside: (other: Rect, otherOffset: Position = { x: 0, y: 0 }) => {
+    rectangle: {
+      isInside: (other: Rectangle, otherOffset: Position = { x: 0, y: 0 }) => {
         if (
           other.left + otherOffset.x < object.right + offset.x &&
           other.right + otherOffset.x > object.left + offset.x &&
@@ -14,24 +17,24 @@ export const rect = (object: Rect, offset: Position = { x: 0, y: 0 }) => {
         }
         return false;
       },
-      overlap: (other: Rect, otherOffset: Position = { x: 0, y: 0 }) => {
+      overlap: (other: Rectangle, otherOffset: Position = { x: 0, y: 0 }) => {
         return (
-          rect(object, offset).position.isInside(
+          rectangle(object, offset).position.isInside(
             {
               x: other.left,
               y: other.top,
             },
             otherOffset
           ) ||
-          rect(object, offset).position.isInside(
+          rectangle(object, offset).position.isInside(
             {
               x: other.right,
               y: other.bottom,
             },
             otherOffset
           ) ||
-          rect(object, offset).rect.isInside(other, otherOffset) ||
-          rect(other, otherOffset).rect.isInside(object, offset)
+          rectangle(object, offset).rectangle.isInside(other, otherOffset) ||
+          rectangle(other, otherOffset).rectangle.isInside(object, offset)
         );
       },
     },

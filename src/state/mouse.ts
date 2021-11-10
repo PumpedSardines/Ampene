@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { Mouse } from "../types";
+import { Mouse } from "../types/types";
 
 export const _mouse = atom<Mouse>({
     key: "mouse",
