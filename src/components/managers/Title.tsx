@@ -8,7 +8,7 @@ const path = require("path");
 function Title() {
   const saveLocation = useRecoilValue(_saveLocation);
 
-  document.title = saveLocation ? path.basename(saveLocation).split(".")[0] : "InfiCanvas";
+  document.title = saveLocation ? path.basename(saveLocation).split(".")[0] : "Ampene";
 
   return <></>;
 }

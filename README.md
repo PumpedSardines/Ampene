@@ -1,4 +1,4 @@
-# InfiCanvas
+# Ampene
 A program to draw on a infintie grid. Supports saving, loading, undo, redo, erasing, drawing and moving the canvas. Made with React and Electron.
 
 ## Motivation

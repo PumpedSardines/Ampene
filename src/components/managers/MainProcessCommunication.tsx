@@ -42,7 +42,7 @@ const MainProcessCommunication = () => {
         // Open with code to handle opening a file with the program
         const getFile = ((): string | null => {
             try {
-                const tmpPath = "/tmp/inficanvas-openwith";
+                const tmpPath = "/tmp/ampene-openwith";
                 const fs = require("fs");
                 const fileExists = fs.existsSync(tmpPath);
                 if (fileExists) {

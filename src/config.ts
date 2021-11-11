@@ -1,5 +1,5 @@
 export const FILE_VERSION = "0.0.0";
-export const PROGRAM_IDENTIFIER = "INFICANVAS";
+export const PROGRAM_IDENTIFIER = "AMPENE";
 export const IS_ELECTRON = true;
 
 export const msg = {
