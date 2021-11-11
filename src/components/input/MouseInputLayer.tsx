@@ -9,6 +9,13 @@ function MouseInputLayer() {
 
     return <div
         id="mouse-input-layer"
+        onMouseUp={(e) => {
+            const isDown = e.buttons === 1;
+            setMouse({
+                ...mouse,
+                down: isDown,
+            });
+        }}
         onMouseMove={(e) => {
             const isDown = e.buttons === 1;
             setMouse({
