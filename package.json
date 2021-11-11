@@ -2,7 +2,7 @@
   "name": "infi-canvas",
   "version": "0.1.1",
   "private": true,
-  "productName": "InfiCanvas",
+  "productName": "Ampene",
   "dependencies": {
     "@craco/craco": "^6.4.0",
     "@electron/remote": "^2.0.1",
@@ -42,8 +42,8 @@
   },
   "build": {
     "extends": null,
-    "productName": "InfiCanvas",
-    "appId": "com.fritiof-rusck.inficanvas",
+    "productName": "Ampene",
+    "appId": "com.fritiof-rusck.ampene",
     "files": [
       "build/react/**/*",
       "electron/**/*"

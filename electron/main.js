@@ -55,7 +55,7 @@ app.whenReady().then(() => {
 });
 
 app.on('open-file', (event, path) => {
-    require("fs").writeFileSync("/tmp/inficanvas-openwith", JSON.stringify({
+    require("fs").writeFileSync("/tmp/ampene-openwith", JSON.stringify({
         path
     }));
 });
