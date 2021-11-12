@@ -6,6 +6,7 @@ import { _camera } from "../../state/camera";
 import { _shapes } from "../../state/shapes";
 import { _saveLocation } from "../../state/save";
 import { PathShape, Position, Shapes } from "../../types/types";
+import { _undoStack, _undoStackCursor } from "./UndoRedo";
 
 const fs = IS_ELECTRON ? require("fs").promises : null;
 const remote = IS_ELECTRON ? require('@electron/remote') : null;
@@ -97,7 +98,7 @@ const SaveLoad = () => {
                     val.meta.p === PROGRAM_IDENTIFIER
                 );
             }
-            
+
 
             if (verify(data)) {
                 return convertSaveVersion(data);
@@ -146,10 +147,14 @@ const SaveLoad = () => {
 
     const loadCurrent: SaveLoadFunctions["loadCurrent"] = useRecoilCallback(({ snapshot, set }) => async (loc?: string) => {
         if (remote) {
-            if(loc) {
+            if (loc) {
                 const { data } = await load(loc);
 
                 set(_saveLocation, loc);
+                set(_undoStack, [{
+                    shapes: data.shapes
+                }]);
+                set(_undoStackCursor, 0);
                 set(_camera, data.camera);
                 set(_shapes, data.shapes);
                 return;
@@ -164,6 +169,10 @@ const SaveLoad = () => {
                 const { data } = await load(location);
 
                 set(_saveLocation, location);
+                set(_undoStack, [{
+                    shapes: data.shapes
+                }]);
+                set(_undoStackCursor, 0);
                 set(_camera, data.camera);
                 set(_shapes, data.shapes);
             }
@@ -175,6 +184,10 @@ const SaveLoad = () => {
     const resetCurrent: SaveLoadFunctions["resetCurrent"] = useRecoilCallback(({ set }) => () => {
         set(_camera, { x: 0, y: 0 });
         set(_shapes, []);
+        set(_undoStack, [{
+            shapes: []
+        }]);
+        set(_undoStackCursor, 0);
         set(_saveLocation, null);
     });
 
@@ -195,8 +208,8 @@ const SaveLoad = () => {
 }
 
 function convertSaveVersion(old: any) {
-    
-    if(old.meta.v === "0.0.0") {
+
+    if (old.meta.v === "0.0.0") {
         const newValue = JSON.parse(JSON.stringify(old));
 
         const lines = JSON.parse(JSON.stringify(newValue.data.lines));
@@ -215,13 +228,13 @@ function convertSaveVersion(old: any) {
             }
 
         });
-        
+
         newValue.meta.v = "0.0.1";
 
         return newValue;
     }
 
-    if(old.meta.v === FILE_VERSION) {
+    if (old.meta.v === FILE_VERSION) {
         return old;
     }
 

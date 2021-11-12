@@ -14,7 +14,7 @@ export const _undoStackCursor = atom<number>({
 });
 
 export const _undoStack = atom<UndoObject[]>({
-    default: [],
+    default: [{shapes: []}],
     key: "undo"
 });
 
