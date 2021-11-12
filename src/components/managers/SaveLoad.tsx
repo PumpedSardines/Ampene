@@ -3,9 +3,9 @@ import * as React from "react";
 import { atom, useRecoilCallback, useSetRecoilState } from "recoil";
 import { FILE_VERSION, IS_ELECTRON, msg, PROGRAM_IDENTIFIER } from "../../config";
 import { _camera } from "../../state/camera";
-import { _lines } from "../../state/lines";
+import { _shapes } from "../../state/shapes";
 import { _saveLocation } from "../../state/save";
-import { Line, Position } from "../../types/types";
+import { PathShape, Position, Shapes } from "../../types/types";
 
 const fs = IS_ELECTRON ? require("fs").promises : null;
 const remote = IS_ELECTRON ? require('@electron/remote') : null;
@@ -18,7 +18,7 @@ export interface SaveObject {
     },
     data: {
         camera: Position;
-        lines: Line[];
+        shapes: Shapes[];
     }
 }
 
@@ -48,7 +48,7 @@ const SaveLoad = () => {
                 d: new Date().getTime()
             },
             data: {
-                lines: await snapshot.getPromise(_lines),
+                shapes: await snapshot.getPromise(_shapes),
                 camera: await snapshot.getPromise(_camera)
             }
         }
@@ -94,18 +94,13 @@ const SaveLoad = () => {
 
                 return (
                     "v" in val.meta &&
-                    val.meta.p === PROGRAM_IDENTIFIER &&
-                    "lines" in val.data &&
-                    "camera" in val.data
+                    val.meta.p === PROGRAM_IDENTIFIER
                 );
             }
+            
 
             if (verify(data)) {
-                if (data.meta.v !== FILE_VERSION) {
-                    throw new Error(msg.load.fileDifferentVersion);
-                }
-
-                return data;
+                return convertSaveVersion(data);
             } else {
                 throw new Error(msg.load.jsonWrongFormatted)
             }
@@ -156,7 +151,7 @@ const SaveLoad = () => {
 
                 set(_saveLocation, loc);
                 set(_camera, data.camera);
-                set(_lines, data.lines);
+                set(_shapes, data.shapes);
                 return;
             }
 
@@ -170,7 +165,7 @@ const SaveLoad = () => {
 
                 set(_saveLocation, location);
                 set(_camera, data.camera);
-                set(_lines, data.lines);
+                set(_shapes, data.shapes);
             }
             return;
         }
@@ -179,7 +174,7 @@ const SaveLoad = () => {
 
     const resetCurrent: SaveLoadFunctions["resetCurrent"] = useRecoilCallback(({ set }) => () => {
         set(_camera, { x: 0, y: 0 });
-        set(_lines, []);
+        set(_shapes, []);
         set(_saveLocation, null);
     });
 
@@ -197,6 +192,40 @@ const SaveLoad = () => {
     }, [])
 
     return <></>
+}
+
+function convertSaveVersion(old: any) {
+    
+    if(old.meta.v === "0.0.0") {
+        const newValue = JSON.parse(JSON.stringify(old));
+
+        const lines = JSON.parse(JSON.stringify(newValue.data.lines));
+
+        delete newValue.data.lines;
+
+        newValue.data.shapes = lines.map((v): PathShape => {
+
+            return {
+                type: "path",
+                meta: {
+                    color: "#333"
+                },
+                boundingBox: v.boundingBox,
+                positions: v.positions
+            }
+
+        });
+        
+        newValue.meta.v = "0.0.1";
+
+        return newValue;
+    }
+
+    if(old.meta.v === FILE_VERSION) {
+        return old;
+    }
+
+    throw new Error("Can't convert");
 }
 
 export default SaveLoad;

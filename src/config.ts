@@ -1,4 +1,4 @@
-export const FILE_VERSION = "0.0.0";
+export const FILE_VERSION = "0.0.1";
 export const PROGRAM_IDENTIFIER = "AMPENE";
 export const IS_ELECTRON = true;
 
@@ -16,3 +16,13 @@ export const msg = {
     loadingNotSupported: "This version of the program can't save files",
   },
 };
+
+
+export const colors = [
+  "#333",
+  "#F9DC5C",
+  "#729933",
+  "#EA261F",
+  "#F0803C",
+  "#39A9DB"
+];

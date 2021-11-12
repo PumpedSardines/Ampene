@@ -3,8 +3,10 @@ import { useRecoilValue } from "recoil";
 import { rectangle } from "../../functions/rectangle/rectangle";
 import useResize from "../../hooks/useResize";
 import { _camera } from "../../state/camera";
-import { _lines, _currentLine } from "../../state/lines";
-import { Line } from "../../types/types";
+import { _darkTheme } from "../../state/design";
+import { _showBoundingBox } from "../../state/dev";
+import { _currentShape, _shapes } from "../../state/shapes";
+import { Circle, CircleShape, Path, PathShape, RectangleShape } from "../../types/types";
 
 
 function Canvas() {
@@ -12,19 +14,35 @@ function Canvas() {
     const canvasRef = React.useRef<HTMLCanvasElement>(null);
     const [windowWidth, windowHeight] = useResize();
     const camera = useRecoilValue(_camera);
-    const currentLine = useRecoilValue(_currentLine);
-    const allLines = useRecoilValue(_lines);
+    const currentShape = useRecoilValue(_currentShape);
+    const shapes = useRecoilValue(_shapes);
+    const showBoundingBox = useRecoilValue(_showBoundingBox);
+    const darkTheme = useRecoilValue(_darkTheme);
 
     // Draw function to draw the canvas
     const draw = (ctx: CanvasRenderingContext2D) => {
         const canvas = ctx.canvas;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        ctx.beginPath();
+        ctx.rect(0, 0, canvas.width, canvas.height);
+
+        if (darkTheme) {
+            ctx.fillStyle = "#555";
+        } else {
+            ctx.fillStyle = "#ffffff";
+        }
+
+        ctx.fill();
 
 
         // Start by drawing the grid lines in the background
         const gridSize = 40; // The size of a grid tile
-        ctx.strokeStyle = "#4444";
+        if (darkTheme) {
+            ctx.strokeStyle = "#ccc4";
+        } else {
+            ctx.strokeStyle = "#4444";
+        }
 
         const gridOffset = {
             x: camera.x % gridSize,
@@ -46,25 +64,15 @@ function Canvas() {
             ctx.stroke();
         }
 
-        const drawLine = (line: Line) => {
-            const inside = rectangle({
-                top: 0,
-                left: 0,
-                right: canvas.width,
-                bottom: canvas.height
-            }).rectangle.isInside(line.boundingBox, camera);
-
-            if(!inside) {
-                return;
-            }
-
-            if (line.positions.length) {
+        // Draw every path
+        const drawPath = (path: PathShape) => {
+            if (path.positions.length) {
                 ctx.beginPath();
                 ctx.moveTo(
-                    line.positions[0].x + camera.x,
-                    line.positions[0].y + camera.y,
+                    path.positions[0].x + camera.x,
+                    path.positions[0].y + camera.y,
                 );
-                for (const position of line.positions) {
+                for (const position of path.positions) {
                     ctx.lineTo(
                         position.x + camera.x,
                         position.y + camera.y,
@@ -72,17 +80,74 @@ function Canvas() {
                 }
 
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = "#111";
+                ctx.strokeStyle = path.meta.color;
                 ctx.stroke();
             }
         }
 
-        if (currentLine) {
-            drawLine(currentLine);
+        // Draw every path
+        const drawCircle = (circle: CircleShape) => {
+            ctx.beginPath();
+            ctx.arc(circle.origin.x + camera.x, circle.origin.y + camera.y, circle.radius, 0, 2 * Math.PI, false);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = circle.meta.color;
+            ctx.stroke();
         }
 
-        for (const line of allLines) {
-            drawLine(line);
+        const drawRectangle = (rectangle: RectangleShape) => {
+            ctx.beginPath();
+            ctx.rect(
+                rectangle.boundingBox.left + camera.x,
+                rectangle.boundingBox.top + camera.y,
+                rectangle.boundingBox.right - rectangle.boundingBox.left,
+                rectangle.boundingBox.bottom - rectangle.boundingBox.top,
+            );
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = rectangle.meta.color;
+            ctx.stroke();
+        }
+
+        for (const shape of [...shapes, currentShape]) {
+            if (!shape) {
+                continue;
+            }
+
+            if (showBoundingBox) {
+                drawRectangle({
+                    type: "rectangle",
+                    meta: {
+                        color: "#ff0000"
+                    },
+                    boundingBox: shape.boundingBox,
+                    ...shape.boundingBox
+                });
+            }
+
+            const inside = rectangle({
+                top: 0,
+                left: 0,
+                right: canvas.width,
+                bottom: canvas.height
+            }).rectangle.isInside(shape.boundingBox, camera);
+
+            if (!inside) {
+                continue;
+            }
+
+            switch (shape.type) {
+                case "path": {
+                    drawPath(shape);
+                    break;
+                }
+                case "circle": {
+                    drawCircle(shape);
+                    break;
+                }
+                case "rectangle": {
+                    drawRectangle(shape);
+                    break;
+                }
+            }
         }
 
 
@@ -111,8 +176,10 @@ function Canvas() {
         windowWidth,
         windowWidth,
         camera,
-        currentLine,
-        allLines
+        shapes,
+        currentShape,
+        showBoundingBox,
+        darkTheme
     ]);
 
 

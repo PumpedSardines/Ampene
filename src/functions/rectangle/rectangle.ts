@@ -5,6 +5,14 @@ export const rectangle = (
   offset: Position = { x: 0, y: 0 }
 ) => {
   return {
+    getOrigin: (): Position => {
+
+      return {
+        y: (object.bottom - object.top) / 2 + object.top + offset.y,
+        x: (object.right - object.left) / 2 + object.left + offset.x,
+      }
+
+    },
     rectangle: {
       isInside: (other: Rectangle, otherOffset: Position = { x: 0, y: 0 }) => {
         if (

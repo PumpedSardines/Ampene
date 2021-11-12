@@ -1,11 +1,11 @@
 import * as React from "react";
 import { atom, useRecoilCallback, useSetRecoilState } from "recoil";
 import { _camera } from "../../state/camera";
-import { _lines } from "../../state/lines";
-import { Line } from "../../types/types";
+import { _shapes } from "../../state/shapes";
+import { Shapes } from "../../types/types";
 
 export interface UndoObject {
-    lines: Line[];
+    shapes: Shapes[];
 }
 
 export const _undoStackCursor = atom<number>({
@@ -40,7 +40,7 @@ const UndoRedo = () => {
         const newUndoStack: UndoObject[] = JSON.parse(JSON.stringify(undoStack));
 
         const data: UndoObject = {
-            lines: optData?.lines ?? await snapshot.getPromise(_lines),
+            shapes: optData?.shapes ?? await snapshot.getPromise(_shapes),
         };
 
         if (undoCursor === 0) {
@@ -70,10 +70,10 @@ const UndoRedo = () => {
         if (undoCursor < undoStack.length - 1) {
             newCursor++;
 
-            const { lines } = undoStack[newCursor];
+            const { shapes } = undoStack[newCursor];
 
             set(_undoStackCursor, newCursor);
-            set(_lines, lines);
+            set(_shapes, shapes);
         }
     });
 
@@ -87,10 +87,10 @@ const UndoRedo = () => {
 
 
 
-            const { lines } = undoStack[newCursor];
+            const { shapes } = undoStack[newCursor];
 
             set(_undoStackCursor, newCursor);
-            set(_lines, lines);
+            set(_shapes, shapes);
         }
     });
 

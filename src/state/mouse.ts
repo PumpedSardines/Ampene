@@ -9,8 +9,3 @@ export const _mouse = atom<Mouse>({
         down: false
     }
 });
-
-export const _oldMouse = atom<null | Mouse>({
-    key: "oldMouse",
-    default: null
-});
