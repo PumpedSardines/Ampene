@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { _halt, _mode } from "../../state/mode";
 import ClickAwayListener from 'react-click-away-listener';
 import "./panel.scss";
@@ -8,10 +8,12 @@ import { rectangle } from "../../functions/rectangle/rectangle";
 import useResize from "../../hooks/useResize";
 import useHalt from "../../hooks/useHalt";
 import { colors } from "../../config";
+import { _darkTheme } from "../../state/design";
+import { translateColor } from "../../functions/colors/translateColor";
 
 function Panel() {
     const [mode, setMode] = useRecoilState(_mode);
-
+    const darkTheme = useRecoilValue(_darkTheme);
 
     const buttons = [
         {
@@ -36,7 +38,7 @@ function Panel() {
         }
     ] as const;
 
-return <div id="panel">
+return <div id="panel" className={darkTheme ? "dark" : "ligth"}>
         <div className="buttons">
             {buttons.map(v => {
                 return <button
@@ -57,6 +59,7 @@ function ColorPicker() {
     const [halt, startHalt, endHalt] = useHalt("color-picker");
     const [color, setColor] = useRecoilState(_color);
     const colorPickerRef = React.useRef<HTMLDivElement>(null);
+    const darkTheme = useRecoilValue(_darkTheme);
 
     return <>
         {colorPickerRef.current && halt && <ClickAwayListener onClickAway={() => endHalt()}>
@@ -84,7 +87,7 @@ function ColorPicker() {
                         key={v}
                         className="color"
                         onClick={() => (setColor(v), endHalt())}
-                        style={{ backgroundColor: v }}
+                        style={{ backgroundColor: translateColor(v, darkTheme) }}
                     ></div>
                 )}
             </div>
@@ -92,7 +95,7 @@ function ColorPicker() {
         <div
             ref={colorPickerRef}
             className="color-picker"
-            style={{ backgroundColor: color }}
+            style={{ backgroundColor: translateColor(color, darkTheme) }}
             onClick={() => {
                 // Check so halt isn't already used for another component
                 if (!halt) {

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useRecoilValue } from "recoil";
+import { translateColor } from "../../functions/colors/translateColor";
 import { rectangle } from "../../functions/rectangle/rectangle";
 import useResize from "../../hooks/useResize";
 import { _camera } from "../../state/camera";
@@ -28,7 +29,7 @@ function Canvas() {
         ctx.rect(0, 0, canvas.width, canvas.height);
 
         if (darkTheme) {
-            ctx.fillStyle = "#555";
+            ctx.fillStyle = "#444";
         } else {
             ctx.fillStyle = "#ffffff";
         }
@@ -80,7 +81,7 @@ function Canvas() {
                 }
 
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = path.meta.color;
+                ctx.strokeStyle = translateColor(path.meta.color,darkTheme);
                 ctx.stroke();
             }
         }
@@ -90,7 +91,7 @@ function Canvas() {
             ctx.beginPath();
             ctx.arc(circle.origin.x + camera.x, circle.origin.y + camera.y, circle.radius, 0, 2 * Math.PI, false);
             ctx.lineWidth = 2;
-            ctx.strokeStyle = circle.meta.color;
+            ctx.strokeStyle = translateColor(circle.meta.color,darkTheme);
             ctx.stroke();
         }
 
@@ -103,7 +104,7 @@ function Canvas() {
                 rectangle.boundingBox.bottom - rectangle.boundingBox.top,
             );
             ctx.lineWidth = 2;
-            ctx.strokeStyle = rectangle.meta.color;
+            ctx.strokeStyle = translateColor(rectangle.meta.color,darkTheme);
             ctx.stroke();
         }
 

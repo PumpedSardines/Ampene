@@ -19,10 +19,19 @@ export const msg = {
 
 
 export const colors = [
-  "#333",
+  "#CCCCCC",
   "#F9DC5C",
   "#729933",
   "#EA261F",
   "#F0803C",
   "#39A9DB"
 ];
+
+export const colorMap = {
+  "#CCCCCC": "#333333",
+  "#F9DC5C":"#ECC209",
+  "#729933":"#729933",
+  "#EA261F":"#EA261F",
+  "#F0803C":"#F0803C",
+  "#39A9DB":"#39A9DB"
+}
