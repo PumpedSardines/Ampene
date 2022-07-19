@@ -1,13 +1,14 @@
 import * as React from "react";
 import { useRecoilValue } from "recoil";
-import { translateColor } from "../../functions/colors/translateColor";
+import { getHex } from "../../functions/colors/getHex";
 import { rectangle } from "../../functions/rectangle/rectangle";
 import useResize from "../../hooks/useResize";
 import { _camera } from "../../state/camera";
 import { _darkTheme } from "../../state/design";
 import { _showBoundingBox } from "../../state/dev";
+import { _mode, _selectArea } from "../../state/mode";
 import { _currentShape, _shapes } from "../../state/shapes";
-import { Circle, CircleShape, Path, PathShape, RectangleShape } from "../../types/types";
+import { Circle, CircleShape, Color, Path, PathShape, RectangleShape } from "../../types/types";
 
 
 function Canvas() {
@@ -19,6 +20,8 @@ function Canvas() {
     const shapes = useRecoilValue(_shapes);
     const showBoundingBox = useRecoilValue(_showBoundingBox);
     const darkTheme = useRecoilValue(_darkTheme);
+    const mode = useRecoilValue(_mode);
+    const selectArea = useRecoilValue(_selectArea);
 
     // Draw function to draw the canvas
     const draw = (ctx: CanvasRenderingContext2D) => {
@@ -81,7 +84,7 @@ function Canvas() {
                 }
 
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = translateColor(path.meta.color,darkTheme);
+                ctx.strokeStyle = getHex(path.meta.color, darkTheme);
                 ctx.stroke();
             }
         }
@@ -91,7 +94,7 @@ function Canvas() {
             ctx.beginPath();
             ctx.arc(circle.origin.x + camera.x, circle.origin.y + camera.y, circle.radius, 0, 2 * Math.PI, false);
             ctx.lineWidth = 2;
-            ctx.strokeStyle = translateColor(circle.meta.color,darkTheme);
+            ctx.strokeStyle = getHex(circle.meta.color, darkTheme);
             ctx.stroke();
         }
 
@@ -104,11 +107,11 @@ function Canvas() {
                 rectangle.boundingBox.bottom - rectangle.boundingBox.top,
             );
             ctx.lineWidth = 2;
-            ctx.strokeStyle = translateColor(rectangle.meta.color,darkTheme);
+            ctx.strokeStyle = getHex(rectangle.meta.color, darkTheme);
             ctx.stroke();
         }
 
-        for (const shape of [...shapes, currentShape]) {
+        for (const shape of [...Object.values(shapes), currentShape]) {
             if (!shape) {
                 continue;
             }
@@ -117,7 +120,7 @@ function Canvas() {
                 drawRectangle({
                     type: "rectangle",
                     meta: {
-                        color: "#ff0000"
+                        color: Color.Red
                     },
                     boundingBox: shape.boundingBox,
                     ...shape.boundingBox
@@ -151,14 +154,30 @@ function Canvas() {
             }
         }
 
+        if (mode === "select") {
+            if(selectArea) {
+                ctx.beginPath();
+                ctx.rect(
+                    selectArea.left + camera.x,
+                    selectArea.top + camera.y,
+                    selectArea.right - selectArea.left,
+                    selectArea.bottom - selectArea.top,
+                );
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#cccc";
+                ctx.fillStyle = "#ccc4";
+                ctx.stroke();
+                ctx.fill();
+            }
 
+        }
+
+        
     }
-
 
     // Get the context from the canvas ref
     React.useEffect(() => {
         const canvas = canvasRef.current;
-
 
         if (canvas) {
             if (canvas.height !== windowHeight || canvas.width !== windowWidth) {
@@ -175,8 +194,10 @@ function Canvas() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         windowWidth,
-        windowWidth,
+        windowHeight,
         camera,
+        mode,
+        selectArea,
         shapes,
         currentShape,
         showBoundingBox,

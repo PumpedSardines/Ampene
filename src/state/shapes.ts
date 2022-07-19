@@ -1,10 +1,9 @@
 import { atom } from "recoil";
-import { colors } from "../config";
-import { Path, Shapes } from "../types/types";
+import { Color, Path, Shapes } from "../types/types";
 
-export const _shapes = atom<Shapes[]>({
+export const _shapes = atom<Record<string, Shapes>>({
     key: "all-shapes",
-    default: []
+    default: {}
 });
 
 export const _currentShape = atom<Shapes | null>({
@@ -12,7 +11,7 @@ export const _currentShape = atom<Shapes | null>({
     default: null
 });
 
-export const _color = atom<string>({
+export const _color = atom<Color>({
     key: "color",
-    default: colors[0]
+    default: Color.Primary
 });

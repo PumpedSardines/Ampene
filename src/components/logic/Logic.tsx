@@ -4,6 +4,7 @@ import Draw from "./Draw";
 import Erase from "./Erase";
 import Move from "./Move";
 import Rectangle from "./Rectangle";
+import Select from "./Select";
 
 export default function Logic() {
 
@@ -13,6 +14,7 @@ export default function Logic() {
         <Move />
         <Circle />
         <Rectangle />
+        <Select />
     </>;
 
 }

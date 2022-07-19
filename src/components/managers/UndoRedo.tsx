@@ -5,7 +5,7 @@ import { _shapes } from "../../state/shapes";
 import { Shapes } from "../../types/types";
 
 export interface UndoObject {
-    shapes: Shapes[];
+    shapes: Record<string, Shapes>;
 }
 
 export const _undoStackCursor = atom<number>({
@@ -14,7 +14,7 @@ export const _undoStackCursor = atom<number>({
 });
 
 export const _undoStack = atom<UndoObject[]>({
-    default: [{shapes: []}],
+    default: [{ shapes: {} }],
     key: "undo"
 });
 

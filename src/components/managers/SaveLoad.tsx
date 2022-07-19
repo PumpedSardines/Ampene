@@ -5,7 +5,7 @@ import { FILE_VERSION, IS_ELECTRON, msg, PROGRAM_IDENTIFIER } from "../../config
 import { _camera } from "../../state/camera";
 import { _shapes } from "../../state/shapes";
 import { _saveLocation } from "../../state/save";
-import { PathShape, Position, Shapes } from "../../types/types";
+import { Color, PathShape, Position, Shapes } from "../../types/types";
 import { _undoStack, _undoStackCursor } from "./UndoRedo";
 
 const fs = IS_ELECTRON ? require("fs").promises : null;
@@ -19,7 +19,7 @@ export interface SaveObject {
     },
     data: {
         camera: Position;
-        shapes: Shapes[];
+        shapes: Record<string, Shapes>;
     }
 }
 
@@ -183,9 +183,9 @@ const SaveLoad = () => {
 
     const resetCurrent: SaveLoadFunctions["resetCurrent"] = useRecoilCallback(({ set }) => () => {
         set(_camera, { x: 0, y: 0 });
-        set(_shapes, []);
+        set(_shapes, {});
         set(_undoStack, [{
-            shapes: []
+            shapes: {}
         }]);
         set(_undoStackCursor, 0);
         set(_saveLocation, null);
@@ -208,6 +208,7 @@ const SaveLoad = () => {
 }
 
 function convertSaveVersion(old: any) {
+    console.log(old.meta.v);
 
     if (old.meta.v === "0.0.0") {
         const newValue = JSON.parse(JSON.stringify(old));
@@ -221,7 +222,7 @@ function convertSaveVersion(old: any) {
             return {
                 type: "path",
                 meta: {
-                    color: "#333"
+                    color: Color.Primary
                 },
                 boundingBox: v.boundingBox,
                 positions: v.positions
@@ -231,7 +232,60 @@ function convertSaveVersion(old: any) {
 
         newValue.meta.v = "0.0.1";
 
-        return newValue;
+        return convertSaveVersion(newValue);
+    }
+
+    if (old.meta.v === "0.0.2") {
+        const newValue = JSON.parse(JSON.stringify(old));
+
+        newValue.data.shapes = newValue.data.shapes.map(v => {
+
+            const color = v.meta.color;
+            let newColor = Color.Primary;
+
+            switch (color) {
+                case "#39A9DB":
+                    newColor = Color.Blue;
+                    break;
+
+                case "#F0803C":
+                    newColor = Color.Orange;
+                    break;
+
+                case "#EA261F":
+                    newColor = Color.Red;
+                    break;
+
+                case "#729933":
+                    newColor = Color.Green;
+                    break;
+
+                case "#F9DC5C":
+                case "#ECC209":
+                    newColor = Color.Yellow;
+                    break;
+
+                case "#CCCCCC":
+                case "#333333":
+                default:
+                    newColor = Color.Primary;
+                    break;
+            }
+
+
+
+            return {
+                ...v,
+                meta: {
+                    color: newColor
+                }
+            };
+
+        });
+
+        newValue.meta.v = "0.0.2";
+
+        return convertSaveVersion(newValue);
     }
 
     if (old.meta.v === FILE_VERSION) {

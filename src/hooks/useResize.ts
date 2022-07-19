@@ -4,7 +4,7 @@ export default function useResize() {
   const [win, setWindow] = useState([window.innerWidth, window.innerHeight]);
 
   useEffect(() => {
-    window.addEventListener("resize", () => {
+    window.addEventListener("resize", (e) => {
       setWindow([window.innerWidth, window.innerHeight]);
     });
   }, []);

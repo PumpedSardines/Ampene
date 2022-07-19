@@ -1,0 +1,30 @@
+.button {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  box-sizing: content-box;
+  height: max-content;
+  border: solid 1px var(--highlight);
+  background-color: var(--background);
+  color: var(--contrast);
+  border-radius: 12px;
+  z-index: 200;
+  font-size: 16px;
+  padding: 12px 24px;
+  transition: opacity 0.2s;
+  cursor: pointer;
+
+  p {
+    margin: 0;
+  }
+  opacity: 0.5;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &.mouse-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}

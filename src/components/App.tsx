@@ -1,26 +1,32 @@
 import * as React from 'react';
 import Canvas from './draw/Canvas';
 import Logic from './logic/Logic';
-import Panel from './input/Panel';
-import MouseInputLayer from './input/MouseInputLayer';
 import Managers from './managers/Managers';
+import MouseInputLayer from './mouseInputLayer/MouseInputLayer';
+import Panel from './panel/Panel';
+import Settings from './settings/Settings';
+import Theme from './Theme';
 
 function App() {
+
   return (
-    <div id="app">
-      <Managers />
+    <>
+      <Theme />
+      <div id="app">
+        <Managers />
 
-      <div className="renderers">
-        <Canvas />
+        <div className="renderers">
+          <Canvas />
+        </div>
+
+        <div className="input">
+          <MouseInputLayer />
+          <Panel />
+        </div>
+
+        <Logic />
       </div>
-
-      <div className="input">
-        <MouseInputLayer />
-        <Panel />
-      </div>
-
-      <Logic />
-    </div>
+    </>
   );
 }
 

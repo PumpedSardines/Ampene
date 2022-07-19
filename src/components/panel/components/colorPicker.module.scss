@@ -1,0 +1,19 @@
+
+
+.color {
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: filter 0.2s;
+  &:hover {
+    filter: brightness(110%);
+  }
+}
+
+.select-point {
+  width: 10px;
+  height: 10px;
+  background-color: var(--background);
+  border-radius: 100%;
+}

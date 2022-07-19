@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { _halt, _mode } from "../../state/mode";
+import { _mode } from "../../state/mode";
 import { Mouse } from "../../types/types";
 import { _mouse } from "../../state/mouse";
 import { rerenderCondition } from "../../lib/rerenderCondition";
@@ -10,7 +10,6 @@ export default function Move() {
 
     const mouse = useRecoilValue(_mouse);
     const mode = useRecoilValue(_mode);
-    const halt = useRecoilValue(_halt);
     const [oldMouse, setOldMouse] = React.useState<null | Mouse>(null);
     const [camera, setCamera] = useRecoilState(_camera);
 
@@ -18,7 +17,7 @@ export default function Move() {
         // Check if mode is halted
         // In this case something else is running on screen
         // And canvas should be "frozen"
-        if (halt || mode !== "move") {
+        if (mode !== "move") {
             return;
         }
 
@@ -35,7 +34,7 @@ export default function Move() {
 
         setOldMouse(mouse);
     }, [
-        rerenderCondition(mode === "move")([halt, mouse])
+        rerenderCondition(mode === "move")([mouse])
     ]);
 
     return <></>;

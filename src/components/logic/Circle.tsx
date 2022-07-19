@@ -1,18 +1,18 @@
 import * as React from "react";
 import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
 import { _color, _currentShape, _shapes } from "../../state/shapes";
-import { _halt, _mode } from "../../state/mode";
+import { _mode } from "../../state/mode";
 import { _undoRedo } from "../managers/UndoRedo";
 import { Mouse, Rectangle, Shapes } from "../../types/types";
 import { _mouse } from "../../state/mouse";
 import { rerenderCondition } from "../../lib/rerenderCondition";
 import { _camera } from "../../state/camera";
+import { v4 as uuid } from "uuid";
 
 export default function Circle() {
 
     const mouse = useRecoilValue(_mouse);
     const mode = useRecoilValue(_mode);
-    const halt = useRecoilValue(_halt);
     const color = useRecoilValue(_color);
     const undoRedo = useRecoilValue(_undoRedo);
     const [currentShape, setCurrentShape] = useRecoilState(_currentShape);
@@ -21,17 +21,17 @@ export default function Circle() {
 
     const addShape = useRecoilCallback(({ snapshot, set }) => async (path: Shapes) => {
 
-        const allShapes = await snapshot.getPromise(_shapes);
+        const allShapes = JSON.parse(JSON.stringify(await snapshot.getPromise(_shapes)));
 
-        set(_shapes, [...allShapes, path]);
+        allShapes[uuid()] = path;
+
+
+        set(_shapes, allShapes);
 
     });
 
     React.useEffect(() => {
-        // Check if mode is halted
-        // In this case something else is running on screen
-        // And canvas should be "frozen"
-        if (halt || !undoRedo || mode !== "circle") {
+        if (!undoRedo || mode !== "circle") {
             return;
         }
 
@@ -70,7 +70,7 @@ export default function Circle() {
                     y: mouse.y - camera.y
                 };
 
-                const radius = Math.sqrt(Math.abs(pos.x - origin.x)**2 + Math.abs(pos.y - origin.y)**2);
+                const radius = Math.sqrt(Math.abs(pos.x - origin.x) ** 2 + Math.abs(pos.y - origin.y) ** 2);
 
 
                 const boundingBox: Rectangle = {
@@ -97,7 +97,7 @@ export default function Circle() {
             }
         }
     }, [
-        rerenderCondition(mode === "circle")([halt, undoRedo, mouse, camera])
+        rerenderCondition(mode === "circle")([undoRedo, mouse, camera])
     ]);
 
     return <></>;

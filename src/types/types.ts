@@ -28,7 +28,7 @@ export interface Circle {
 export interface Shape<T> {
   type: T,
   meta: {
-    color: string,
+    color: Color,
   },
   boundingBox: Rectangle;
 };
@@ -39,3 +39,13 @@ export type RectangleShape = Shape<"rectangle"> & Rectangle;
 
 
 export type Shapes = PathShape | CircleShape | RectangleShape;
+
+export enum Color {
+  Primary,
+  Select,
+  Yellow,
+  Green,
+  Red,
+  Orange,
+  Blue,
+}
